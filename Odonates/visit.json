@@ -1,0 +1,120 @@
+{
+  "genre":"M",
+  "label": "Passage",
+  "label_list": "Passages",
+  "display_properties": [
+    "observers",
+    "passage",
+    "visit_date_min",
+    "pluviosite",
+    "couvertureNuageuse",
+    "vent",
+    "comments"
+  ],
+  "display_list": [
+    "passage",
+    "visit_date_min",
+    "observers",
+    "nb_observations"
+  ],
+  "keep": [
+    "observers",
+    "visit_date_min",
+    "pluviosite",
+    "couvertureNuageuse",
+    "vent",
+    "comments"
+  ],
+  "specific": {
+    "id_base_site": {
+      "type_widget": "site",
+      "required": true,
+      "attribut_label": "Site"
+    },
+    "qObservateur":{
+      "type_widget": "select",
+      "required": false,
+      "attribut_label": "Qualité observateur",
+      "values": ["Propriétaire"]
+    },
+    "observateurCompl":{
+      "type_widget": "datalist",
+      "attribut_label": "Observateurs complémentaires",
+      "api": "users/menu/__MODULE.ID_LIST_OBSERVER",
+      "application": "GeoNature",
+      "keyValue": "id_role",
+      "keyLabel": "nom_complet",
+      "type_util": "user",
+      "multiple": true,
+      "required": false
+    },
+    "visit_date_min": {
+      "type_widget": "date",
+      "attribut_label": "Date du début du passage",
+      "required": true
+    },
+    "heureDebut": {
+      "type_widget": "time",
+      "attribut_label": "Heure de début",
+      "required": true
+    },
+    "heureFin": {
+      "type_widget": "time",
+      "attribut_label": "Heure de fin",
+      "required": true
+    },
+    "passage": {
+      "type_widget": "select",
+      "required": true,
+      "attribut_label": "Numéro de passage",
+      "values": ["1er passage (01/04-15/06)", "2eme passage (16/06-31/07)", "3eme passage (01/08-31/09)"]
+    },
+    "periode": {
+      "type_widget": "select",
+      "required": true,
+      "attribut_label": "Période de passage",
+      "values": ["Session 1", "Session 2", "Session 3"]
+    },
+    "tempAir": {
+      "type_widget": "number",
+      "attribut_label": "Température de l’air (en °C)",
+      "required": false,
+      "min": -50,
+      "max": 60
+    },
+    "humidite": {
+      "type_widget": "number",
+      "attribut_label": "Humidité relative (en %)",
+      "required": false,
+      "min": 0,
+      "max": 100
+    },
+    "pluviosite": {
+      "type_widget": "select",
+      "attribut_label": "Pluviosité",
+	    "required": false,
+      "values": ["Aucune", "Averse intermittente", "Bruine","Pluie continue"]
+    },
+    "couvertureNuageuse": {
+      "type_widget": "select",
+      "attribut_label": "Couverture nuageuse",
+	    "required": false,
+      "values": ["0 - 25%", "25 - 50%", "50 - 75%", "75 - 100%"]
+    },
+    "vent": {
+      "type_widget": "select",
+      "required": false,
+      "values": ["0-Calme", "1-Très légère brise", "2-Légère brise", "3-Petite brise","4-Jolie brise","6-Vent frais","7-Grand frais"]
+    },
+    "pertubations": {
+      "type_widget": "text",
+      "attribut_label": "Pertubations",
+      "required": false
+    },
+    "comments": {
+      "type_widget": "textarea",
+      "attribut_label": "Commentaire",
+      "required": false
+    }
+  }
+}

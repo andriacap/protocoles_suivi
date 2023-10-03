@@ -1,0 +1,149 @@
+{
+  "description_field_name":"cd_nom",
+  "genre":"F",
+  "display_properties": [
+  "cd_nom",
+  "id_nomenclature_stade",
+  "id_nomenclature_etat_bio",
+  "id_nomenclature_sex",
+  "count_min",
+  "count_max",
+  "count_average",
+  "count_tranche",
+  "comments"
+],
+"display_list": [
+  "cd_nom",
+  "count_min",
+  "count_max"
+],
+  "specific": {
+    "cd_nom": {
+      "type_widget": "taxonomy",
+      "attribut_label": "Espèces/taxons observés",
+      "keyValue": "cd_nom",
+      "keyLabel": "__MODULE.TAXONOMY_DISPLAY_FIELD_NAME",
+      "multiple": false,
+      "api": "taxref/allnamebylist/__MODULE.ID_LIST_TAXONOMY",
+      "application": "TaxHub",
+      "required": true,
+      "type_util": "taxonomy"
+    } ,
+    "count_exact":{
+      "type_widget": "number",
+      "attribut_label": "Nombre exacte",
+      "required": false,
+      "min": 0
+    },
+    "count_tranche":{
+      "type_widget": "select",
+      "attribut_label": "Nombre tranche",
+      "required": true,
+      "values": ["1-10", "11-50", "51-100", ">100","Indeterminé"]
+    },
+    "count_min": {
+      "type_widget": "number",
+      "attribut_label": "Nombre minimum",
+      "required": false,
+      "value": 1
+    },
+    "count_max": {
+      "type_widget": "number",
+      "attribut_label": "Nombre maximum",
+      "required": false
+    },
+    "count_average": {
+      "type_widget": "number",
+      "attribut_label": "moyenne nombre obs",
+      "required": false
+    },
+    "id_nomenclature_etat_bio": {
+      "type_widget": "datalist",
+      "attribut_label": "Etat biologique",
+      "api": "nomenclatures/nomenclature/ETA_BIO",
+      "application": "GeoNature",
+      "keyValue": "id_nomenclature",
+      "keyLabel": "label_fr",
+      "data_path": "values",
+      "type_util": "nomenclature",
+      "multiple": false,
+      "hidden": true,
+      "filters": {
+        "cd_nomenclature": ["3"]
+      },
+      "default": {
+        "cd_nomenclature": "3"
+      }
+    },
+    "id_nomenclature_stade": {
+      "type_widget": "datalist",
+      "attribut_label": "Stade de vie",
+      "api": "nomenclatures/nomenclature/STADE_VIE",
+      "application": "GeoNature",
+      "keyValue": "id_nomenclature",
+      "keyLabel": "label_fr",
+      "data_path": "values",
+      "type_util": "nomenclature",
+      "required": false,
+      "filters": {
+          "cd_nomenclature": ["1", "3", "4", "6", "11"]
+      },
+      "default": {
+        "cd_nomenclature": "1"
+      }
+    },
+    "id_nomenclature_sex": {
+      "type_widget": "datalist",
+      "attribut_label": "Sexe majoritaire",
+      "api": "nomenclatures/nomenclature/SEXE",
+      "application": "GeoNature",
+      "keyValue": "id_nomenclature",
+      "keyLabel": "label_fr",
+      "data_path": "values",
+      "type_util": "nomenclature",
+      "required": true,
+      "filters": {
+          "cd_nomenclature": ["0", "2", "3", "5"]
+      },
+      "default": {
+        "cd_nomenclature": "1"
+      }
+    },
+    "comportement": {
+      "type_widget": "select",
+      "attribut_label": "Comportement majoritaire",
+	    "required": false,
+      "values": ["Inconnu", "Chasse/alimentation", "Posé","Passage en vol","Repos","Tandem","Coeur copulatoire","Pond","Territorial"]
+    },
+    "comments": {
+      "type_widget": "textarea",
+      "attribut_label": "Commentaire"
+    }
+  },
+  "change": [
+    "({objForm, meta}) => {",
+    "const count_tranche = objForm.value.count_tranche;",
+    "if (objForm.controls.count_tranche.valid && count_tranche == 'Indeterminé') {",
+    "objForm.patchValue({'count_min':null})",
+    "objForm.patchValue({'count_max':null})",
+    "objForm.patchValue({'count_average':null})",
+    "}",
+    "else if (objForm.controls.count_tranche.valid && count_tranche == '>100') {",
+    "objForm.patchValue({'count_min':100})",
+    "const countMin = parseInt(count_tranche.split('>').shift())",
+    "objForm.patchValue({'count_min':countMin})",
+    "objForm.patchValue({'count_max':null})",
+    "objForm.patchValue({'count_average':null})",
+    "}",
+    "else if (objForm.controls.count_tranche.valid) {",
+    "const countMin = parseInt(count_tranche.split('-').shift())",
+    "const countMax = parseInt(count_tranche.split('-').pop())",
+    "objForm.patchValue({'count_min':countMin})",
+    "objForm.patchValue({'count_max':countMax})",
+    "objForm.patchValue({'count_average':(countMin+countMax)/2})",
+    "}",
+    "else { return }",
+    "}",
+    ""
+  ]
+}

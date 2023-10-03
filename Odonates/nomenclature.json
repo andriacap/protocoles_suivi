@@ -1,0 +1,759 @@
+{
+  "types": [
+    {
+      "mnemonique": "TYPEZH",
+      "label_default": "Type Zone Humide",
+      "definition_default": "Type de petite zone humide (protocole Caractérisation de la mare)"
+    },
+    {
+      "mnemonique": "STATUT_PZH",
+      "label_default": "Statut des petites zones humides",
+      "definition_default": "Statut des petites zones humides (protocole Caractérisation de la mare)"
+    },
+    {
+      "mnemonique": "HABITAT_ENVI",
+      "label_default": "Habitat environnant",
+      "definition_default": "Habitat environnant (protocole Caractérisation de la mare)"
+    },
+    {
+      "mnemonique": "PRTG_PENTE",
+      "label_default": "Pourcentage pentes douces",
+      "definition_default": "Pourcentage pentes douces (protocole Caractérisation de la mare)"
+    }
+    ,
+    {
+      "mnemonique": "FOND_MARE",
+      "label_default": "Fond de la mare",
+      "definition_default": "Fond de la mare (protocole Caractérisation de la mare)"
+    }
+    ,
+    {
+      "mnemonique": "STADE_PZH",
+      "label_default": "Fond de la mare",
+      "definition_default": "Fond de la mare (protocole Caractérisation de la mare)"
+    }
+    ,
+    {
+      "mnemonique": "ALIMENTATION_EAU",
+      "label_default": "Alimentation en eau",
+      "definition_default": "Alimentation en eau (protocole Caractérisation de la mare)"
+    }
+    ,
+    {
+      "mnemonique": "LIAISON_HYDRO",
+      "label_default": "Liaison au reseau hydrologique",
+      "definition_default": "Liaison au reseau hydrologique (protocole Caractérisation de la mare)"
+    }
+    ,
+    {
+      "mnemonique": "USAGE_ANTHRO",
+      "label_default": "Usage anthropique",
+      "definition_default": "Usage anthropique (protocole Caractérisation de la mare)"
+    }
+    ,
+    {
+      "mnemonique": "ALTERATION_MARE",
+      "label_default": "Altération de la mare",
+      "definition_default": "Altération de la mare (protocole Caractérisation de la mare)"
+    }
+  ],
+  "nomenclatures": [
+    {
+      "type":"TYPEZH",
+      "cd_nomenclature": "1",
+      "mnemonique": "Mare",
+      "label_default": "Mare",
+      "definition_default": "Mare"
+    },
+    {
+      "type":"TYPEZH",
+      "cd_nomenclature": "2",
+      "mnemonique": "Mouillère",
+      "label_default": "Mouillère",
+      "definition_default": "Mouillère"
+    },
+    {
+      "type":"TYPEZH",
+      "cd_nomenclature": "3",
+      "mnemonique": "Lagune",
+      "label_default": "Lagune",
+      "definition_default": "Lagune"
+    },
+    {
+      "type":"TYPEZH",
+      "cd_nomenclature": "4",
+      "mnemonique": "Panne dunaire",
+      "label_default": "Panne dunaire",
+      "definition_default": "Panne dunaire"
+    },
+    {
+      "type":"TYPEZH",
+      "cd_nomenclature": "5",
+      "mnemonique": "Lacais de montagne",
+      "label_default": "Lacais de montagne",
+      "definition_default": "Lacais de montagne"
+    },
+    {
+      "type":"TYPEZH",
+      "cd_nomenclature": "6",
+      "mnemonique": "Noue",
+      "label_default": "Noue",
+      "definition_default": "Noue"
+    },
+    {
+      "type":"TYPEZH",
+      "cd_nomenclature": "7",
+      "mnemonique": "Lavoir",
+      "label_default": "Lavoir",
+      "definition_default": "Lavoir"
+    },
+    {
+      "type":"TYPEZH",
+      "cd_nomenclature": "8",
+      "mnemonique": "Bassin routier",
+      "label_default": "Bassin routier",
+      "definition_default": "Bassin routier"
+    },
+    {
+      "type":"TYPEZH",
+      "cd_nomenclature": "9",
+      "mnemonique": "Bassin d'orage",
+      "label_default": "Bassin d'orage",
+      "definition_default": "Bassin d'orage"
+    },
+    {
+      "type":"TYPEZH",
+      "cd_nomenclature": "10",
+      "mnemonique": "Autre",
+      "label_default": "Autre",
+      "definition_default": "Autre"
+    },
+    {
+      "type": "TYPE_SITE",
+      "cd_nomenclature": "MAR",
+      "mnemonique": "Mare",
+      "label_default": "Mare",
+      "definition_default": "Type site pour protocole monitorings"
+    },
+    {
+      "type": "STATUT_PZH",
+      "cd_nomenclature": "0",
+      "mnemonique": "Disparue",
+      "label_default": "Disparue",
+      "definition_default": "Disparue"
+    },
+    {
+      "type": "STATUT_PZH",
+      "cd_nomenclature": "1",
+      "mnemonique": "Vue",
+      "label_default": "Vue",
+      "definition_default": "Vue"
+    },
+    {
+      "type": "STATUT_PZH",
+      "cd_nomenclature": "2",
+      "mnemonique": "Caractérisée",
+      "label_default": "Caractérisée",
+      "definition_default": "Caractérisée"
+    },
+    {
+      "type": "HABITAT_ENVI",
+      "cd_nomenclature": "1",
+      "mnemonique": "Prairie",
+      "label_default": "Prairie",
+      "definition_default": "Prairie"
+    },
+    {
+      "type": "HABITAT_ENVI",
+      "cd_nomenclature": "2",
+      "mnemonique": "Forêt",
+      "label_default": "Forêt",
+      "definition_default": "Forêt"
+    },
+    {
+      "type": "HABITAT_ENVI",
+      "cd_nomenclature": "3",
+      "mnemonique": "Bord de route",
+      "label_default": "Bord de route",
+      "definition_default": "Bord de route"
+    },
+    {
+      "type": "HABITAT_ENVI",
+      "cd_nomenclature": "4",
+      "mnemonique": "Culture",
+      "label_default": "Culture",
+      "definition_default": "Culture"
+    },
+    {
+      "type": "HABITAT_ENVI",
+      "cd_nomenclature": "5",
+      "mnemonique": "Marais",
+      "label_default": "Marais",
+      "definition_default": "Marais"
+    },
+    {
+      "type": "HABITAT_ENVI",
+      "cd_nomenclature": "6",
+      "mnemonique": "Urbain",
+      "label_default": "Urbain",
+      "definition_default": "Urbain"
+    },
+    {
+      "type": "HABITAT_ENVI",
+      "cd_nomenclature": "7",
+      "mnemonique": "Friche",
+      "label_default": "Friche",
+      "definition_default": "Friche"
+    },
+    {
+      "type": "HABITAT_ENVI",
+      "cd_nomenclature": "8",
+      "mnemonique": "Carrière",
+      "label_default": "Carrière",
+      "definition_default": "Carrière"
+    },
+    {
+      "type": "HABITAT_ENVI",
+      "cd_nomenclature": "9",
+      "mnemonique": "Autre",
+      "label_default": "Autre",
+      "definition_default": "Autre"
+    }
+    ,
+    {
+      "type": "PRTG_PENTE",
+      "cd_nomenclature": "0",
+      "mnemonique": "0",
+      "label_default": "0",
+      "definition_default": "0"
+    }
+    ,
+    {
+      "type": "PRTG_PENTE",
+      "cd_nomenclature": "1",
+      "mnemonique": "0-25",
+      "label_default": "0-25",
+      "definition_default": "0-25"
+    }
+    ,
+    {
+      "type": "PRTG_PENTE",
+      "cd_nomenclature": "2",
+      "mnemonique": "25-50",
+      "label_default": "25-50",
+      "definition_default": "25-50"
+    }
+    ,
+    {
+      "type": "PRTG_PENTE",
+      "cd_nomenclature": "3",
+      "mnemonique": "50-75",
+      "label_default": "50-75",
+      "definition_default": "50-75"
+    }
+    ,
+    {
+      "type": "PRTG_PENTE",
+      "cd_nomenclature": "4",
+      "mnemonique": "75-100",
+      "label_default": "75-100",
+      "definition_default": "75-100"
+    }
+    ,
+    {
+      "type": "PRTG_PENTE",
+      "cd_nomenclature": "5",
+      "mnemonique": "100",
+      "label_default": "100",
+      "definition_default": "100"
+    }
+    ,
+    {
+      "type": "PRTG_PENTE",
+      "cd_nomenclature": "7",
+      "mnemonique": "Inconnu",
+      "label_default": "Inconnu",
+      "definition_default": "Inconnu"
+    }
+    ,
+    {
+      "type": "FOND_MARE",
+      "cd_nomenclature": "1",
+      "mnemonique": "Naturel",
+      "label_default": "Naturel",
+      "definition_default": "Naturel"
+    }
+    ,
+    {
+      "type": "FOND_MARE",
+      "cd_nomenclature": "2",
+      "mnemonique": "Argile compacté",
+      "label_default": "Argile compacté",
+      "definition_default": "Argile compacté"
+    }
+    ,
+    {
+      "type": "FOND_MARE",
+      "cd_nomenclature": "3",
+      "mnemonique": "Béton ou minéral",
+      "label_default": "Béton ou minéral",
+      "definition_default": "Béton ou minéral"
+    }
+    ,
+    {
+      "type": "FOND_MARE",
+      "cd_nomenclature": "4",
+      "mnemonique": "Bâche",
+      "label_default": "Bâche",
+      "definition_default": "Bâche"
+    }
+    ,
+    {
+      "type": "FOND_MARE",
+      "cd_nomenclature": "5",
+      "mnemonique": "Autre",
+      "label_default": "Autre",
+      "definition_default": "Autre"
+    }
+    ,
+    {
+      "type": "FOND_MARE",
+      "cd_nomenclature": "0",
+      "mnemonique": "Inconnu",
+      "label_default": "Inconnu",
+      "definition_default": "Inconnu"
+    }
+    ,
+    {
+      "type": "STADE_PZH",
+      "cd_nomenclature": "1",
+      "mnemonique": "A",
+      "label_default": "Stade A",
+      "definition_default": "Stade A : Les plantes des berges et les plantes aquatiques enracinées sont absentes ou commencent tout juste à s'implanter et/ou la mare n'est pas envasée"
+    }
+    ,
+    {
+      "type": "STADE_PZH",
+      "cd_nomenclature": "2",
+      "mnemonique": "AB",
+      "label_default": "Stade AB",
+      "definition_default": "Stade AB"
+    }
+    ,
+    {
+      "type": "STADE_PZH",
+      "cd_nomenclature": "3",
+      "mnemonique": "B",
+      "label_default": "Stade B",
+      "definition_default": "Stade B : Les plantes des berges et les plantes aquatiques enracinées ont déjà colonisé une partie de la mare et/ou la mare est peu envasée"
+    }
+    ,
+    {
+      "type": "STADE_PZH",
+      "cd_nomenclature": "4",
+      "mnemonique": "BC",
+      "label_default": "Stade BC",
+      "definition_default": "Stade BC"
+    }
+    ,
+    {
+      "type": "STADE_PZH",
+      "cd_nomenclature": "5",
+      "mnemonique": "C",
+      "label_default": "Stade C",
+      "definition_default": "Stade C : Les plantes des berges et les plantes aquatiques enracinées ont envahi la totalité de la mare et/ou la mare est partiellement envasée"
+    }
+    ,
+    {
+      "type": "STADE_PZH",
+      "cd_nomenclature": "6",
+      "mnemonique": "CD",
+      "label_default": "Stade CD",
+      "definition_default": "Stade CD"
+    }
+    ,
+    {
+      "type": "STADE_PZH",
+      "cd_nomenclature": "7",
+      "mnemonique": "D",
+      "label_default": "Stade D",
+      "definition_default": "Stade D : La mare est quasiment comblée. Elle est colonisée par des ronces et des arbustes et/ou elle est très envasée"
+    }
+    ,
+    {
+      "type": "STADE_PZH",
+      "cd_nomenclature": "0",
+      "mnemonique": "Inconnu",
+      "label_default": "Inconnu",
+      "definition_default": "Inconnu"
+    }
+    ,
+    {
+      "type": "ALIMENTATION_EAU",
+      "cd_nomenclature": "1",
+      "mnemonique": "Pluie",
+      "label_default": "Pluie",
+      "definition_default": "Pluie"
+    }
+    ,
+    {
+      "type": "ALIMENTATION_EAU",
+      "cd_nomenclature": "2",
+      "mnemonique": "Ruisselement de voirie",
+      "label_default": "Ruisselement de voirie",
+      "definition_default": "Ruisselement de voirie"
+    }
+    ,
+    {
+      "type": "ALIMENTATION_EAU",
+      "cd_nomenclature": "3",
+      "mnemonique": "Ruisselement de pluie naturel sur cultures",
+      "label_default": "Ruisselement de pluie naturel sur cultures",
+      "definition_default": "Ruisselement de pluie naturel sur cultures"
+    }
+    ,
+    {
+      "type": "ALIMENTATION_EAU",
+      "cd_nomenclature": "4",
+      "mnemonique": "Source",
+      "label_default": "Source",
+      "definition_default": "Source"
+    }
+    ,
+    {
+      "type": "ALIMENTATION_EAU",
+      "cd_nomenclature": "5",
+      "mnemonique": "Nappe souterraine",
+      "label_default": "Nappe souterraine",
+      "definition_default": "Nappe souterraine"
+    }
+    ,
+    {
+      "type": "ALIMENTATION_EAU",
+      "cd_nomenclature": "6",
+      "mnemonique": "Gouttière de bâtiment",
+      "label_default": "Gouttière de bâtiment",
+      "definition_default": "Gouttière de bâtiment"
+    }
+    ,
+    {
+      "type": "ALIMENTATION_EAU",
+      "cd_nomenclature": "7",
+      "mnemonique": "Buse, canalisation, drainage",
+      "label_default": "Buse, canalisation, drainage",
+      "definition_default": "Buse, canalisation, drainage"
+    }
+    ,
+    {
+      "type": "ALIMENTATION_EAU",
+      "cd_nomenclature": "0",
+      "mnemonique": "Aucune",
+      "label_default": "Aucune",
+      "definition_default": "Aucune"
+    }
+    ,
+    {
+      "type": "ALIMENTATION_EAU",
+      "cd_nomenclature": "8",
+      "mnemonique": "Autre",
+      "label_default": "Autre",
+      "definition_default": "Autre"
+    }
+    ,
+    {
+      "type": "ALIMENTATION_EAU",
+      "cd_nomenclature": "9",
+      "mnemonique": "Inconnu",
+      "label_default": "Inconnu",
+      "definition_default": "Inconnu"
+    }
+    ,
+    {
+      "type": "LIAISON_HYDRO",
+      "cd_nomenclature": "0",
+      "mnemonique": "Aucune",
+      "label_default": "Aucune",
+      "definition_default": "Aucune"
+    }
+    ,
+    {
+      "type": "LIAISON_HYDRO",
+      "cd_nomenclature": "1",
+      "mnemonique": "Fossé, noues",
+      "label_default": "Fossé, noues",
+      "definition_default": "Fossé, noues"
+    }
+    ,
+    {
+      "type": "LIAISON_HYDRO",
+      "cd_nomenclature": "2",
+      "mnemonique": "Drainage, pompage",
+      "label_default": "Drainage, pompage",
+      "definition_default": "Drainage, pompage"
+    }
+    ,
+    {
+      "type": "LIAISON_HYDRO",
+      "cd_nomenclature": "3",
+      "mnemonique": "Cours d'eau",
+      "label_default": "Cours d'eau",
+      "definition_default": "Cours d'eau"
+    }
+    ,
+    {
+      "type": "LIAISON_HYDRO",
+      "cd_nomenclature": "4",
+      "mnemonique": "Axe de ruissellement",
+      "label_default": "Axe de ruissellement",
+      "definition_default": "Axe de ruissellement"
+    }
+    ,
+    {
+      "type": "LIAISON_HYDRO",
+      "cd_nomenclature": "5",
+      "mnemonique": "Autre",
+      "label_default": "Autre",
+      "definition_default": "Autre"
+    }
+    ,
+    {
+      "type": "LIAISON_HYDRO",
+      "cd_nomenclature": "6",
+      "mnemonique": "Inconnu",
+      "label_default": "Inconnu",
+      "definition_default": "Inconnu"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "1",
+      "mnemonique": "Baignade",
+      "label_default": "Baignade",
+      "definition_default": "Baignade"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "2",
+      "mnemonique": "Abreuvoir amenagé",
+      "label_default": "Abreuvoir amenagé",
+      "definition_default": "Abreuvoir amenagé"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "3",
+      "mnemonique": "Abreuvoir non amenagé",
+      "label_default": "Abreuvoir non amenagé",
+      "definition_default": "Abreuvoir non amenagé"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "4",
+      "mnemonique": "Collecte d'eau",
+      "label_default": "Collecte d'eau",
+      "definition_default": "Collecte d'eau"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "5",
+      "mnemonique": "Pêche",
+      "label_default": "Pêche",
+      "definition_default": "Pêche"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "6",
+      "mnemonique": "Chasse",
+      "label_default": "Chasse",
+      "definition_default": "Chasse"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "7",
+      "mnemonique": "Réserve incendie",
+      "label_default": "Réserve incendie",
+      "definition_default": "Réserve incendie"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "8",
+      "mnemonique": "Ornemental",
+      "label_default": "Ornemental",
+      "definition_default": "Ornemental"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "9",
+      "mnemonique": "Réserve de biodiversité",
+      "label_default": "Réserve de biodiversité",
+      "definition_default": "Réserve de biodiversité"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "10",
+      "mnemonique": "Patrimoine culturel ou paysagé",
+      "label_default": "Patrimoine culturel ou paysagé",
+      "definition_default": "Patrimoine culturel ou paysagé"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "11",
+      "mnemonique": "Pédagogique",
+      "label_default": "Pédagogique",
+      "definition_default": "Pédagogique"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "12",
+      "mnemonique": "Abandonné",
+      "label_default": "Abandonné",
+      "definition_default": "Abandonné"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "13",
+      "mnemonique": "Lagunage",
+      "label_default": "Lagunage",
+      "definition_default": "Lagunage"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "14",
+      "mnemonique": "Infiltration d'eau",
+      "label_default": "Infiltration d'eau",
+      "definition_default": "Infiltration d'eau"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "15",
+      "mnemonique": "Loisir, fête, squat",
+      "label_default": "Loisir, fête, squat",
+      "definition_default": "Loisir, fête, squat"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "16",
+      "mnemonique": "Autre",
+      "label_default": "Autre",
+      "definition_default": "Autre"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "17",
+      "mnemonique": "Inconnu",
+      "label_default": "Inconnu",
+      "definition_default": "Inconnu"
+    }
+    ,
+    {
+      "type": "USAGE_ANTHRO",
+      "cd_nomenclature": "0",
+      "mnemonique": "Aucun",
+      "label_default": "Aucun",
+      "definition_default": "Aucun"
+    }
+    ,
+    {
+      "type": "ALTERATION_MARE",
+      "cd_nomenclature": "0",
+      "mnemonique": "Aucune",
+      "label_default": "Aucune",
+      "definition_default": "Aucune"
+    }
+    ,
+    {
+      "type": "ALTERATION_MARE",
+      "cd_nomenclature": "1",
+      "mnemonique": "Déchets",
+      "label_default": "Déchets",
+      "definition_default": "Déchets"
+    }
+    ,
+    {
+      "type": "ALTERATION_MARE",
+      "cd_nomenclature": "2",
+      "mnemonique": "Algues filamenteuses",
+      "label_default": "Algues filamenteuses",
+      "definition_default": "Algues filamenteuses"
+    }
+    ,
+    {
+      "type": "ALTERATION_MARE",
+      "cd_nomenclature": "3",
+      "mnemonique": "Pollution chimique",
+      "label_default": "Pollution chimique",
+      "definition_default": "Pollution chimique"
+    }
+    ,
+    {
+      "type": "ALTERATION_MARE",
+      "cd_nomenclature": "4",
+      "mnemonique": "Pollution organique",
+      "label_default": "Pollution organique",
+      "definition_default": "Pollution organique"
+    }
+    ,
+    {
+      "type": "ALTERATION_MARE",
+      "cd_nomenclature": "5",
+      "mnemonique": "Piétinement humain des berges",
+      "label_default": "Piétinement humain des berges",
+      "definition_default": "Piétinement humain des berges"
+    }
+    ,
+    {
+      "type": "ALTERATION_MARE",
+      "cd_nomenclature": "6",
+      "mnemonique": "Piétinement animal des berges",
+      "label_default": "Piétinement animal des berges",
+      "definition_default": "Piétinement animal des berges"
+    }
+    ,
+    {
+      "type": "ALTERATION_MARE",
+      "cd_nomenclature": "7",
+      "mnemonique": "Comblement en cours",
+      "label_default": "Comblement en cours",
+      "definition_default": "Comblement en cours"
+    }
+    ,
+    {
+      "type": "ALTERATION_MARE",
+      "cd_nomenclature": "8",
+      "mnemonique": "Envahissement végétal",
+      "label_default": "Envahissement végétal",
+      "definition_default": "Envahissement végétal"
+    }
+    ,
+    {
+      "type": "ALTERATION_MARE",
+      "cd_nomenclature": "9",
+      "mnemonique": "Poissons",
+      "label_default": "Poissons",
+      "definition_default": "Poissons"
+    }
+    ,
+    {
+      "type": "ALTERATION_MARE",
+      "cd_nomenclature": "10",
+      "mnemonique": "Autre",
+      "label_default": "Autre",
+      "definition_default": "Autre"
+    }
+  ]
+}
