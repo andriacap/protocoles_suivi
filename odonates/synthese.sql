@@ -43,7 +43,7 @@ SELECT o.uuid_observation AS unique_id_sinp,
   nullif(
     json_extract_path(oc.data::json, 'id_nomenclature_etat_bio')::text,
     'null'
-  )::integer AS id_nomenclature_etat_bio,
+  )::integer AS id_nomenclature_bio_condition,
   nullif(
     ((oc.data::json#>'{count_min}'::text [])::text),
     'null'
