@@ -1,72 +1,94 @@
-DROP VIEW IF EXISTS gn_monitoring.v_export_odonates_standard;
-CREATE OR REPLACE VIEW gn_monitoring.v_export_odonates_standard AS WITH module AS (
-        SELECT *
-        FROM gn_commons.t_modules tm
-        WHERE module_code = 'odonates'
+-- Vue générique pour alimenter la synthèse dans le cadre d'un protocole site-visite-observation
+-- 
+-- Ce fichier peut être copié dans le dossier du sous-module et renommé en synthese.sql (et au besoin personnalisé)
+-- le fichier sera joué à l'installation avec la valeur de module_code qui sera attribué automatiquement
+--
+--
+-- Personalisations possibles
+--
+--  - ajouter des champs specifiques qui peuvent alimenter la synthese
+--      jointure avec les table de complement
+--
+--  - choisir les valeurs de champs de nomenclatures qui seront propres au modules
+-- ce fichier contient une variable :module_code (ou :'module_code')
+-- utiliser psql avec l'option -v module_code=<module_code
+-- ne pas remplacer cette variable, elle est indispensable pour les scripts d'installations
+-- le module pouvant être installé avec un code différent de l'original
+drop view if exists gn_monitoring.v_export_odonates_standard;
+create or replace view gn_monitoring.v_export_odonates_standard as with module as (
+        select *
+        from gn_commons.t_modules tm
+        where module_code = 'odonates'
     ),
-    sites AS (
-        SELECT tbs.id_base_site,
+    sites as (
+        select tbs.id_base_site,
             sc.id_module as id_module,
             tbs.base_site_name as nompzh,
             tbs.base_site_code,
             tbs.base_site_description,
             tbs.id_inventor,
             tbs.id_digitiser,
-            COALESCE (tbs.meta_update_date, first_use_date) AS date_site,
+            coalesce (tbs.meta_update_date, first_use_date) as date_site,
             tbs.altitude_min,
             tbs.altitude_max,
             tbs.geom_local,
-            st_x(ST_Centroid(geom)) AS wgs84_x,
-            st_y(ST_Centroid(geom)) AS wgs84_y,
-            st_x(ST_Centroid(geom_local)) AS l93_x,
-            st_y(ST_Centroid(geom_local)) AS l93_y,
-            (sc.data::json#>>'{pzhCode}')::text AS pzhCode,
-            (roles.nom_role || ' ' || roles.prenom_role) AS numer_site,
-            org.nom_organisme AS organisme,
-            ARRAY_AGG(dep.area_name) AS departement,
-            ARRAY_AGG(dep.area_code) AS code_dep,
-            ARRAY_AGG(com.area_name) AS commune,
-            (sc.data::json#>>'{qObserver}')::text AS qObserver,
-            ARRAY(
+            st_x(ST_Centroid(geom)) as wgs84_x,
+            st_y(ST_Centroid(geom)) as wgs84_y,
+            st_x(ST_Centroid(geom_local)) as l93_x,
+            st_y(ST_Centroid(geom_local)) as l93_y,
+            (sc.data::json#>>'{pzhCode}')::text as pzhCode,
+            (roles.nom_role || ' ' || roles.prenom_role) as numer_site,
+            org.nom_organisme as organisme,
+            ARRAY_AGG(distinct(dep.area_name)) as departement,
+            ARRAY_AGG(distinct(dep.area_code)) as code_dep,
+            ARRAY_AGG(distinct(com.area_name)) as commune,
+            array(
+                select obs
+                from unnest(
+                        array(
+                            select jsonb_array_elements_text(sc.data->'qObserver')::text
+                        )
+                    ) obs
+            ) as qObserver,
+            array(
                 select tr.nom_role || ' ' || tr.prenom_role
                 from unnest(
-                        ARRAY(
-                            SELECT jsonb_array_elements_text(sc.data->'observateurCompl')::int
+                        array(
+                            select jsonb_array_elements_text(sc.data->'observateurCompl')::int
                         )
                     ) entity_id
-                    join utilisateurs.t_roles tr ON tr.id_role = entity_id
+                    join utilisateurs.t_roles tr on tr.id_role = entity_id
             ) as observateurCompl,
-            (sc.data::json#>>'{observateurCompl}')::text AS observateurCompl2,
-            (sc.data::json#>>'{gestionnaire}')::text AS gestionnairepzh,
-            (sc.data::json#>>'{owner}')::text AS proprietairepzh,
-            (sc.data::json#>>'{proprietepzh}')::text AS proprietepzh,
+            (sc.data::json#>>'{gestionnaire}')::text as gestionnairepzh,
+            (sc.data::json#>>'{owner}')::text as proprietairepzh,
+            (sc.data::json#>>'{proprietepzh}')::text as proprietepzh,
             -- (sc.data::json#>>'{typeZH}')::text AS typezh,
             tn2.label_fr typezh,
             tn3.label_fr methodepzh
-        FROM gn_monitoring.t_base_sites as tbs
-            JOIN gn_monitoring.t_site_complements sc on sc.id_base_site = tbs.id_base_site -- LEFT JOIN ref_nomenclatures.t_nomenclatures tn1 ON tn1.id_nomenclature::text = (sc.data->>'typeZH')::text
-            JOIN ref_nomenclatures.t_nomenclatures tn2 ON tn2.id_nomenclature::int = tbs.id_nomenclature_type_site
-            JOIN ref_nomenclatures.t_nomenclatures tn3 ON tn3.id_nomenclature::text = (sc.data->>'id_nomenclature_prospection')::text
-            JOIN utilisateurs.t_roles roles ON roles.id_role = tbs.id_digitiser
-            JOIN utilisateurs.bib_organismes org ON org.id_organisme = roles.id_organisme
-            JOIN (
+        from gn_monitoring.t_base_sites as tbs
+            join gn_monitoring.t_site_complements sc on sc.id_base_site = tbs.id_base_site -- LEFT JOIN ref_nomenclatures.t_nomenclatures tn1 ON tn1.id_nomenclature::text = (sc.data->>'typeZH')::text
+            join ref_nomenclatures.t_nomenclatures tn2 on tn2.id_nomenclature::int = tbs.id_nomenclature_type_site
+            join ref_nomenclatures.t_nomenclatures tn3 on tn3.id_nomenclature::text = (sc.data->>'id_nomenclature_prospection')::text
+            join utilisateurs.t_roles roles on roles.id_role = tbs.id_digitiser
+            join utilisateurs.bib_organismes org on org.id_organisme = roles.id_organisme
+            join (
                 select la.area_name,
                     csa.id_base_site
-                FROM ref_geo.l_areas la
-                    JOIN ref_geo.bib_areas_types bat ON la.id_type = bat.id_type
-                    JOIN gn_monitoring.cor_site_area csa ON csa.id_area = la.id_area
-                WHERE bat.type_code = 'COM'
-            ) com ON tbs.id_base_site = com.id_base_site
-            JOIN (
+                from ref_geo.l_areas la
+                    join ref_geo.bib_areas_types bat on la.id_type = bat.id_type
+                    join gn_monitoring.cor_site_area csa on csa.id_area = la.id_area
+                where bat.type_code = 'COM'
+            ) com on tbs.id_base_site = com.id_base_site
+            join (
                 select la.area_name,
                     la.area_code,
                     csa.id_base_site
-                FROM ref_geo.l_areas la
-                    JOIN ref_geo.bib_areas_types bat ON la.id_type = bat.id_type
-                    JOIN gn_monitoring.cor_site_area csa ON csa.id_area = la.id_area
-                WHERE bat.type_code = 'DEP'
-            ) dep ON tbs.id_base_site = dep.id_base_site
-        GROUP BY tbs.id_base_site,
+                from ref_geo.l_areas la
+                    join ref_geo.bib_areas_types bat on la.id_type = bat.id_type
+                    join gn_monitoring.cor_site_area csa on csa.id_area = la.id_area
+                where bat.type_code = 'DEP'
+            ) dep on tbs.id_base_site = dep.id_base_site
+        group by tbs.id_base_site,
             numer_site,
             id_module,
             organisme,
@@ -74,52 +96,52 @@ CREATE OR REPLACE VIEW gn_monitoring.v_export_odonates_standard AS WITH module A
             typezh,
             methodepzh
     ),
-    visites AS (
-        SELECT tbv.id_base_site,
+    visites as (
+        select tbv.id_base_site,
             tbv.id_module,
             tbv.id_base_visit,
             STRING_AGG(
                 tr_digi.nom_role || ' ' || tr_digi.prenom_role,
                 ', '
-                ORDER BY tr_digi.nom_role,
+                order by tr_digi.nom_role,
                     tr_digi.prenom_role
-            ) AS numer_visit,
+            ) as numer_visit,
             string_agg(
-                DISTINCT concat (UPPER(tr.nom_role), ' ', tr.prenom_role),
+                distinct concat (UPPER(tr.nom_role), ' ', tr.prenom_role),
                 ', '
-                ORDER BY concat (UPPER(tr.nom_role), ' ', tr.prenom_role)
-            ) AS observers_visit,
-            (tvc.data::json#>>'{qObserver}')::text AS qObserver_visit,
-            ARRAY(
+                order by concat (UPPER(tr.nom_role), ' ', tr.prenom_role)
+            ) as observers_visit,
+            (tvc.data::json#>>'{qObserver}')::text as qObserver_visit,
+            array(
                 select tr.nom_role || ' ' || tr.prenom_role
                 from unnest(
-                        ARRAY(
-                            SELECT jsonb_array_elements_text(tvc.data->'observateurCompl')::int
+                        array(
+                            select jsonb_array_elements_text(tvc.data->'observateurCompl')::int
                         )
                     ) entity_id
-                    join utilisateurs.t_roles tr ON tr.id_role = entity_id
+                    join utilisateurs.t_roles tr on tr.id_role = entity_id
             ) as observateurCompl_visit,
-            org.nom_organisme AS organisme_numer_visit,
+            org.nom_organisme as organisme_numer_visit,
             tbv.visit_date_min as date_visit,
-            (tvc.data::json#>>'{heureDebut}')::text AS heureDebut,
-            (tvc.data::json#>>'{heureFin}')::text AS heureFin,
-            (tvc.data::json#>>'{passage}')::text AS passage,
-            (tvc.data::json#>>'{periode}')::text AS periode,
-            (tvc.data::json#>>'{tempAir}')::text AS tempAir,
-            (tvc.data::json#>>'{humidite}')::text AS humidite,
-            (tvc.data::json#>>'{pluviosite}')::text AS pluviosite,
-            (tvc.data::json#>>'{couvertureNuageuse}')::text AS couvertureNuageuse,
-            (tvc.data::json#>>'{vent}')::text AS vent,
-            (tvc.data::json#>>'{pertubations}')::text AS pertubations,
-            (tvc.data::json#>>'{comments}')::text AS commentaireVisite
-        FROM gn_monitoring.t_base_visits tbv
-            JOIN gn_monitoring.t_visit_complements tvc ON tvc.id_base_visit = tbv.id_base_visit
-            JOIN gn_monitoring.cor_visit_observer cvo ON cvo.id_base_visit = tbv.id_base_visit
-            JOIN utilisateurs.t_roles tr ON tr.id_role = cvo.id_role
-            JOIN utilisateurs.t_roles tr_digi ON tr_digi.id_role = tbv.id_digitiser
-            JOIN utilisateurs.bib_organismes org ON org.id_organisme = tr_digi.id_organisme -- WHERE
+            (tvc.data::json#>>'{heureDebut}')::text as heureDebut,
+            (tvc.data::json#>>'{heureFin}')::text as heureFin,
+            (tvc.data::json#>>'{passage}')::text as passage,
+            (tvc.data::json#>>'{periode}')::text as periode,
+            (tvc.data::json#>>'{tempAir}')::text as tempAir,
+            (tvc.data::json#>>'{humidite}')::text as humidite,
+            (tvc.data::json#>>'{pluviosite}')::text as pluviosite,
+            (tvc.data::json#>>'{couvertureNuageuse}')::text as couvertureNuageuse,
+            (tvc.data::json#>>'{vent}')::text as vent,
+            (tvc.data::json#>>'{pertubations}')::text as pertubations,
+            (tvc.data::json#>>'{comments}')::text as commentaireVisite
+        from gn_monitoring.t_base_visits tbv
+            join gn_monitoring.t_visit_complements tvc on tvc.id_base_visit = tbv.id_base_visit
+            join gn_monitoring.cor_visit_observer cvo on cvo.id_base_visit = tbv.id_base_visit
+            join utilisateurs.t_roles tr on tr.id_role = cvo.id_role
+            join utilisateurs.t_roles tr_digi on tr_digi.id_role = tbv.id_digitiser
+            join utilisateurs.bib_organismes org on org.id_organisme = tr_digi.id_organisme -- WHERE
             --     DATE_PART('YEAR', tbv.visit_date_min) = DATE_PART('YEAR', current_timestamp) -1
-        GROUP BY tbv.id_base_site,
+        group by tbv.id_base_site,
             tbv.id_base_visit,
             tvc.data,
             org.nom_organisme
@@ -179,17 +201,17 @@ select s.numer_site numer_site,
     )::text as type_denombrement,
     obs.comments as commentaireObs
 from sites s
-    JOIN module m ON m.id_module = s.id_module
-    JOIN visites v ON v.id_module = m.id_module
-    JOIN gn_monitoring.t_observations obs ON obs.id_base_visit = v.id_base_visit
-    JOIN gn_monitoring.t_observation_complements toc ON toc.id_observation = obs.id_observation
-    JOIN taxonomie.taxref t ON t.cd_nom = obs.cd_nom
-    JOIN ref_nomenclatures.t_nomenclatures tn ON (
+    join module m on m.id_module = s.id_module
+    join visites v on v.id_module = m.id_module
+    join gn_monitoring.t_observations obs on obs.id_base_visit = v.id_base_visit
+    join gn_monitoring.t_observation_complements toc on toc.id_observation = obs.id_observation
+    join taxonomie.taxref t on t.cd_nom = obs.cd_nom
+    join ref_nomenclatures.t_nomenclatures tn on (
         (toc.data->>'id_nomenclature_etat_bio'::text)::integer
     ) = tn.id_nomenclature
-    JOIN ref_nomenclatures.t_nomenclatures tn1 ON (
+    join ref_nomenclatures.t_nomenclatures tn1 on (
         (toc.data->>'id_nomenclature_stade'::text)::integer
     ) = tn1.id_nomenclature
-    JOIN ref_nomenclatures.t_nomenclatures tn2 ON (
+    join ref_nomenclatures.t_nomenclatures tn2 on (
         (toc.data->>'id_nomenclature_sex'::text)::integer
     ) = tn2.id_nomenclature

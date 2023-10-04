@@ -18,7 +18,8 @@
     "humidite",
     "vent",
     "pertubations",
-    "comments"
+    "comments",
+    "id_base_site"
   ],
   "display_list": [
     "passage",
@@ -36,9 +37,21 @@
   ],
   "specific": {
     "id_base_site": {
-      "type_widget": "site",
+      "type_widget": "datalist",
+      "attribut_label": "Site",
+      "type_util": "site",
+      "keyValue": "id_base_site",
+      "keyLabel": "base_site_name",
+      "api": "__MONITORINGS_PATH/list/__MODULE.MODULE_CODE/site",
+      "params": [
+        "({meta}) => ({",
+        "id_module: __MODULE.ID_MODULE,",
+        "order_by: 'base_site_name*'",
+        "})"
+      ],
+      "application": "GeoNature",
       "required": true,
-      "attribut_label": "Site"
+      "hidden": "({meta, value}) => value.id_base_site"
     },
     "qObserver":{
       "type_widget": "datalist",
