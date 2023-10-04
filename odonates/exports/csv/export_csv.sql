@@ -14,204 +14,174 @@
 -- utiliser psql avec l'option -v module_code=<module_code
 -- ne pas remplacer cette variable, elle est indispensable pour les scripts d'installations
 -- le module pouvant être installé avec un code différent de l'original
-drop view if exists gn_monitoring.v_export_odonates_standard;
-create or replace view gn_monitoring.v_export_odonates_standard as with module as (
-        select *
-        from gn_commons.t_modules tm
-        where module_code = 'odonates'
-    ),
-    sites as (
-        select tbs.id_base_site,
-            sc.id_module as id_module,
-            tbs.base_site_name as nompzh,
+DROP view IF EXISTS gn_monitoring.v_export_odonates_standard;
+CREATE OR REPLACE VIEW gn_monitoring.v_export_odonates_standard
+AS WITH module AS (
+         SELECT tm.id_module,
+            tm.module_code,
+            tm.module_label,
+            tm.module_picto,
+            tm.module_desc,
+            tm.module_group,
+            tm.module_path,
+            tm.module_external_url,
+            tm.module_target,
+            tm.module_comment,
+            tm.active_frontend,
+            tm.active_backend,
+            tm.module_doc_url,
+            tm.module_order,
+            tm.type,
+            tm.meta_create_date,
+            tm.meta_update_date,
+            tm.ng_module
+           FROM gn_commons.t_modules tm
+          WHERE tm.module_code::text = 'odonates'::text
+        ), sites AS (
+         SELECT tbs.id_base_site,
+            sc.id_module,
+            tbs.base_site_name AS nompzh,
             tbs.base_site_code,
             tbs.base_site_description,
             tbs.id_inventor,
             tbs.id_digitiser,
-            coalesce (tbs.meta_update_date, first_use_date) as date_site,
+            COALESCE(tbs.meta_update_date, tbs.first_use_date::timestamp without time zone) AS date_site,
             tbs.altitude_min,
             tbs.altitude_max,
             tbs.geom_local,
-            st_x(ST_Centroid(geom)) as wgs84_x,
-            st_y(ST_Centroid(geom)) as wgs84_y,
-            st_x(ST_Centroid(geom_local)) as l93_x,
-            st_y(ST_Centroid(geom_local)) as l93_y,
-            (sc.data::json#>>'{pzhCode}')::text as pzhCode,
-            (roles.nom_role || ' ' || roles.prenom_role) as numer_site,
-            org.nom_organisme as organisme,
-            ARRAY_AGG(distinct(dep.area_name)) as departement,
-            ARRAY_AGG(distinct(dep.area_code)) as code_dep,
-            ARRAY_AGG(distinct(com.area_name)) as commune,
-            array(
-                select obs
-                from unnest(
-                        array(
-                            select jsonb_array_elements_text(sc.data->'qObserver')::text
-                        )
-                    ) obs
-            ) as qObserver,
-            array(
-                select tr.nom_role || ' ' || tr.prenom_role
-                from unnest(
-                        array(
-                            select jsonb_array_elements_text(sc.data->'observateurCompl')::int
-                        )
-                    ) entity_id
-                    join utilisateurs.t_roles tr on tr.id_role = entity_id
-            ) as observateurCompl,
-            (sc.data::json#>>'{gestionnaire}')::text as gestionnairepzh,
-            (sc.data::json#>>'{owner}')::text as proprietairepzh,
-            (sc.data::json#>>'{proprietepzh}')::text as proprietepzh,
-            -- (sc.data::json#>>'{typeZH}')::text AS typezh,
-            tn2.label_fr typezh,
-            tn3.label_fr methodepzh
-        from gn_monitoring.t_base_sites as tbs
-            join gn_monitoring.t_site_complements sc on sc.id_base_site = tbs.id_base_site -- LEFT JOIN ref_nomenclatures.t_nomenclatures tn1 ON tn1.id_nomenclature::text = (sc.data->>'typeZH')::text
-            join ref_nomenclatures.t_nomenclatures tn2 on tn2.id_nomenclature::int = tbs.id_nomenclature_type_site
-            join ref_nomenclatures.t_nomenclatures tn3 on tn3.id_nomenclature::text = (sc.data->>'id_nomenclature_prospection')::text
-            join utilisateurs.t_roles roles on roles.id_role = tbs.id_digitiser
-            join utilisateurs.bib_organismes org on org.id_organisme = roles.id_organisme
-            join (
-                select la.area_name,
+            st_x(st_centroid(tbs.geom)) AS wgs84_x,
+            st_y(st_centroid(tbs.geom)) AS wgs84_y,
+            st_x(st_centroid(tbs.geom_local)) AS l93_x,
+            st_y(st_centroid(tbs.geom_local)) AS l93_y,
+            sc.data::json #>> '{pzhCode}'::text[] AS pzhcode,
+            (roles.nom_role::text || ' '::text) || roles.prenom_role::text AS numer_site,
+            org.nom_organisme AS organisme,
+            string_agg(btrim(dep.area_name::text, '"'::text), ', '::text) AS departement,
+            string_agg(btrim(dep.area_code::text, '"'::text), ', '::text) AS code_dep,
+            string_agg(btrim(com.area_name::text, '"'::text), ', '::text) AS commune,
+            ( SELECT string_agg(btrim(jsonb_array_elements_text.value, '"'::text), ', '::text) AS string_agg
+                   FROM jsonb_array_elements_text(sc.data -> 'qObserver'::text) jsonb_array_elements_text(value)) AS qobserver,
+            array_to_string(ARRAY( SELECT (tr.nom_role::text || ' '::text) || tr.prenom_role::text
+                   FROM unnest(ARRAY( SELECT jsonb_array_elements_text(sc.data -> 'observateurCompl'::text)::integer AS jsonb_array_elements_text)) entity_id(entity_id)
+                     JOIN utilisateurs.t_roles tr ON tr.id_role = entity_id.entity_id), ', '::text) AS observateurcompl,
+            sc.data::json #>> '{gestionnaire}'::text[] AS gestionnairepzh,
+            sc.data::json #>> '{owner}'::text[] AS proprietairepzh,
+            sc.data::json #>> '{proprietepzh}'::text[] AS proprietepzh,
+            tn2_1.label_fr AS typezh,
+            tn3.label_fr AS methodepzh
+           FROM gn_monitoring.t_base_sites tbs
+             JOIN gn_monitoring.t_site_complements sc ON sc.id_base_site = tbs.id_base_site
+             JOIN ref_nomenclatures.t_nomenclatures tn2_1 ON tn2_1.id_nomenclature = tbs.id_nomenclature_type_site
+             JOIN ref_nomenclatures.t_nomenclatures tn3 ON tn3.id_nomenclature::text = (sc.data ->> 'id_nomenclature_prospection'::text)
+             JOIN utilisateurs.t_roles roles ON roles.id_role = tbs.id_digitiser
+             JOIN utilisateurs.bib_organismes org ON org.id_organisme = roles.id_organisme
+             JOIN ( SELECT la.area_name,
                     csa.id_base_site
-                from ref_geo.l_areas la
-                    join ref_geo.bib_areas_types bat on la.id_type = bat.id_type
-                    join gn_monitoring.cor_site_area csa on csa.id_area = la.id_area
-                where bat.type_code = 'COM'
-            ) com on tbs.id_base_site = com.id_base_site
-            join (
-                select la.area_name,
+                   FROM ref_geo.l_areas la
+                     JOIN ref_geo.bib_areas_types bat ON la.id_type = bat.id_type
+                     JOIN gn_monitoring.cor_site_area csa ON csa.id_area = la.id_area
+                  WHERE bat.type_code::text = 'COM'::text) com ON tbs.id_base_site = com.id_base_site
+             JOIN ( SELECT la.area_name,
                     la.area_code,
                     csa.id_base_site
-                from ref_geo.l_areas la
-                    join ref_geo.bib_areas_types bat on la.id_type = bat.id_type
-                    join gn_monitoring.cor_site_area csa on csa.id_area = la.id_area
-                where bat.type_code = 'DEP'
-            ) dep on tbs.id_base_site = dep.id_base_site
-        group by tbs.id_base_site,
-            numer_site,
-            id_module,
-            organisme,
-            sc.data,
-            typezh,
-            methodepzh
-    ),
-    visites as (
-        select tbv.id_base_site,
+                   FROM ref_geo.l_areas la
+                     JOIN ref_geo.bib_areas_types bat ON la.id_type = bat.id_type
+                     JOIN gn_monitoring.cor_site_area csa ON csa.id_area = la.id_area
+                  WHERE bat.type_code::text = 'DEP'::text) dep ON tbs.id_base_site = dep.id_base_site
+          GROUP BY tbs.id_base_site, ((roles.nom_role::text || ' '::text) || roles.prenom_role::text), sc.id_module, org.nom_organisme, sc.data, tn2_1.label_fr, tn3.label_fr
+        ), visites AS (
+         SELECT tbv.id_base_site,
             tbv.id_module,
             tbv.id_base_visit,
-            STRING_AGG(
-                tr_digi.nom_role || ' ' || tr_digi.prenom_role,
-                ', '
-                order by tr_digi.nom_role,
-                    tr_digi.prenom_role
-            ) as numer_visit,
-            string_agg(
-                distinct concat (UPPER(tr.nom_role), ' ', tr.prenom_role),
-                ', '
-                order by concat (UPPER(tr.nom_role), ' ', tr.prenom_role)
-            ) as observers_visit,
-            (tvc.data::json#>>'{qObserver}')::text as qObserver_visit,
-            array(
-                select tr.nom_role || ' ' || tr.prenom_role
-                from unnest(
-                        array(
-                            select jsonb_array_elements_text(tvc.data->'observateurCompl')::int
-                        )
-                    ) entity_id
-                    join utilisateurs.t_roles tr on tr.id_role = entity_id
-            ) as observateurCompl_visit,
-            org.nom_organisme as organisme_numer_visit,
-            tbv.visit_date_min as date_visit,
-            (tvc.data::json#>>'{heureDebut}')::text as heureDebut,
-            (tvc.data::json#>>'{heureFin}')::text as heureFin,
-            (tvc.data::json#>>'{passage}')::text as passage,
-            (tvc.data::json#>>'{periode}')::text as periode,
-            (tvc.data::json#>>'{tempAir}')::text as tempAir,
-            (tvc.data::json#>>'{humidite}')::text as humidite,
-            (tvc.data::json#>>'{pluviosite}')::text as pluviosite,
-            (tvc.data::json#>>'{couvertureNuageuse}')::text as couvertureNuageuse,
-            (tvc.data::json#>>'{vent}')::text as vent,
-            (tvc.data::json#>>'{pertubations}')::text as pertubations,
-            (tvc.data::json#>>'{comments}')::text as commentaireVisite
-        from gn_monitoring.t_base_visits tbv
-            join gn_monitoring.t_visit_complements tvc on tvc.id_base_visit = tbv.id_base_visit
-            join gn_monitoring.cor_visit_observer cvo on cvo.id_base_visit = tbv.id_base_visit
-            join utilisateurs.t_roles tr on tr.id_role = cvo.id_role
-            join utilisateurs.t_roles tr_digi on tr_digi.id_role = tbv.id_digitiser
-            join utilisateurs.bib_organismes org on org.id_organisme = tr_digi.id_organisme -- WHERE
-            --     DATE_PART('YEAR', tbv.visit_date_min) = DATE_PART('YEAR', current_timestamp) -1
-        group by tbv.id_base_site,
-            tbv.id_base_visit,
-            tvc.data,
-            org.nom_organisme
-    )
-select s.numer_site numer_site,
+            string_agg((tr_digi.nom_role::text || ' '::text) || tr_digi.prenom_role::text, ', '::text ORDER BY tr_digi.nom_role, tr_digi.prenom_role) AS numer_visit,
+            string_agg(DISTINCT concat(upper(tr.nom_role::text), ' ', tr.prenom_role), ', '::text ORDER BY (concat(upper(tr.nom_role::text), ' ', tr.prenom_role))) AS observers_visit,
+            ( SELECT string_agg(btrim(jsonb_array_elements_text.value, '"'::text), ', '::text) AS string_agg
+                   FROM jsonb_array_elements_text(tvc.data -> 'qObserver'::text) jsonb_array_elements_text(value)) AS qobserver_visit,
+            array_to_string(ARRAY( SELECT (tr_1.nom_role::text || ' '::text) || tr_1.prenom_role::text
+                   FROM unnest(ARRAY( SELECT jsonb_array_elements_text(tvc.data -> 'observateurCompl'::text)::integer AS jsonb_array_elements_text)) entity_id(entity_id)
+                     JOIN utilisateurs.t_roles tr_1 ON tr_1.id_role = entity_id.entity_id), ','::text) AS observateurcompl_visit,
+            org.nom_organisme AS organisme_numer_visit,
+            tbv.visit_date_min AS date_visit,
+            tvc.data::json #>> '{heureDebut}'::text[] AS heuredebut,
+            tvc.data::json #>> '{heureFin}'::text[] AS heurefin,
+            tvc.data::json #>> '{passage}'::text[] AS passage,
+            tvc.data::json #>> '{periode}'::text[] AS periode,
+            tvc.data::json #>> '{tempAir}'::text[] AS tempair,
+            tvc.data::json #>> '{humidite}'::text[] AS humidite,
+            tvc.data::json #>> '{pluviosite}'::text[] AS pluviosite,
+            tvc.data::json #>> '{couvertureNuageuse}'::text[] AS couverturenuageuse,
+            tvc.data::json #>> '{vent}'::text[] AS vent,
+            tvc.data::json #>> '{pertubations}'::text[] AS pertubations,
+            tvc.data::json #>> '{comments}'::text[] AS commentairevisite
+           FROM gn_monitoring.t_base_visits tbv
+             JOIN gn_monitoring.t_visit_complements tvc ON tvc.id_base_visit = tbv.id_base_visit
+             JOIN gn_monitoring.cor_visit_observer cvo ON cvo.id_base_visit = tbv.id_base_visit
+             JOIN utilisateurs.t_roles tr ON tr.id_role = cvo.id_role
+             JOIN utilisateurs.t_roles tr_digi ON tr_digi.id_role = tbv.id_digitiser
+             JOIN utilisateurs.bib_organismes org ON org.id_organisme = tr_digi.id_organisme
+          GROUP BY tbv.id_base_site, tbv.id_base_visit, tvc.data, org.nom_organisme
+        )
+ SELECT s.numer_site,
     s.organisme,
     s.departement,
     s.code_dep,
     s.commune,
-    s.l93_x as longitude,
-    s.l93_y as latitude,
-    s.date_site as date_site,
-    s.qObserver,
+    s.l93_x AS longitude,
+    s.l93_y AS latitude,
+    s.date_site,
+    s.qobserver,
     s.proprietairepzh,
     s.proprietepzh,
-    s.observateurCompl,
+    s.observateurcompl,
     s.gestionnairepzh,
-    s.pzhCode,
+    s.pzhcode,
     s.typezh,
     s.methodepzh,
-    v.observateurCompl_visit,
+    v.numer_visit,
+    v.observers_visit,
+    v.qobserver_visit,
+    v.observateurcompl_visit,
     v.organisme_numer_visit,
     v.date_visit,
-    v.heureDebut,
-    v.heureFin,
+    v.heuredebut,
+    v.heurefin,
     v.passage,
     v.periode,
-    v.tempAir,
+    v.tempair,
     v.humidite,
     v.pluviosite,
-    v.couvertureNuageuse,
+    v.couverturenuageuse,
     v.vent,
     v.pertubations,
-    v.commentaireVisite,
-    t.lb_nom as nomScientifiqueRef,
-    t.cd_nom as CD_nom,
-    t.regne as Regne,
-    t.classe as Classe,
-    t.ordre as Ordre,
-    t.famille as Famille,
-    t.sous_famille as Genre,
-    t.nom_complet as nomCite,
-    t.nom_vern as nomVernaculaire,
-    tn.label_fr as ocEtatBio,
-    tn1.label_fr as ocStade,
-    tn2.label_fr as ocSexe,
-    (toc.data::json#>>'{count_exact}')::text as countExact,
-    (toc.data::json#>>'{count_average}')::text as count_average,
-    (toc.data::json#>>'{count_min}')::text as count_min,
-    (toc.data::json#>>'{count_max}')::text as count_max,
-    to_timestamp(v.heureFin, 'HH24:MI:SS')::time - to_timestamp(v.heureDebut, 'HH24:MI:SS')::time as temps_releve,
-    (
-        case
-            when toc.data->'count_exact'::text = 'null' then 'Compté'
-            else 'Estimé'
-        end
-    )::text as type_denombrement,
-    obs.comments as commentaireObs
-from sites s
-    join module m on m.id_module = s.id_module
-    join visites v on v.id_module = m.id_module
-    join gn_monitoring.t_observations obs on obs.id_base_visit = v.id_base_visit
-    join gn_monitoring.t_observation_complements toc on toc.id_observation = obs.id_observation
-    join taxonomie.taxref t on t.cd_nom = obs.cd_nom
-    join ref_nomenclatures.t_nomenclatures tn on (
-        (toc.data->>'id_nomenclature_etat_bio'::text)::integer
-    ) = tn.id_nomenclature
-    join ref_nomenclatures.t_nomenclatures tn1 on (
-        (toc.data->>'id_nomenclature_stade'::text)::integer
-    ) = tn1.id_nomenclature
-    join ref_nomenclatures.t_nomenclatures tn2 on (
-        (toc.data->>'id_nomenclature_sex'::text)::integer
-    ) = tn2.id_nomenclature
+    v.commentairevisite,
+    t.lb_nom AS nomscientifiqueref,
+    t.cd_nom,
+    t.regne,
+    t.classe,
+    t.ordre,
+    t.famille,
+    t.sous_famille AS genre,
+    t.nom_complet AS nomcite,
+    t.nom_vern AS nomvernaculaire,
+    tn.label_fr AS ocetatbio,
+    tn1.label_fr AS ocstade,
+    tn2.label_fr AS ocsexe,
+    toc.data::json #>> '{count_exact}'::text[] AS countexact,
+    toc.data::json #>> '{count_average}'::text[] AS count_average,
+    toc.data::json #>> '{count_min}'::text[] AS count_min,
+    toc.data::json #>> '{count_max}'::text[] AS count_max,
+    to_timestamp(v.heurefin, 'HH24:MI:SS'::text)::time without time zone - to_timestamp(v.heuredebut, 'HH24:MI:SS'::text)::time without time zone AS temps_releve,
+        CASE
+            WHEN (toc.data -> 'count_exact'::text) = 'null'::jsonb THEN 'Compté'::text
+            ELSE 'Estimé'::text
+        END AS type_denombrement,
+    obs.comments AS commentaireobs
+   FROM sites s
+     JOIN module m ON m.id_module = s.id_module
+     JOIN visites v ON v.id_module = m.id_module
+     JOIN gn_monitoring.t_observations obs ON obs.id_base_visit = v.id_base_visit
+     JOIN gn_monitoring.t_observation_complements toc ON toc.id_observation = obs.id_observation
+     JOIN taxonomie.taxref t ON t.cd_nom = obs.cd_nom
+     JOIN ref_nomenclatures.t_nomenclatures tn ON ((toc.data ->> 'id_nomenclature_etat_bio'::text)::integer) = tn.id_nomenclature
+     JOIN ref_nomenclatures.t_nomenclatures tn1 ON ((toc.data ->> 'id_nomenclature_stade'::text)::integer) = tn1.id_nomenclature
+     JOIN ref_nomenclatures.t_nomenclatures tn2 ON ((toc.data ->> 'id_nomenclature_sex'::text)::integer) = tn2.id_nomenclature;
