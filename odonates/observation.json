@@ -1,4 +1,5 @@
 {
+  "cruved": {"C": 1, "U": 1, "D": 3},
   "description_field_name":"cd_nom",
   "genre":"F",
   "display_properties": [
@@ -6,8 +7,10 @@
   "id_nomenclature_stade",
   "id_nomenclature_etat_bio",
   "id_nomenclature_sex",
+  "comportement",
   "count_min",
   "count_max",
+  "count_exact",
   "count_average",
   "count_tranche",
   "comments"

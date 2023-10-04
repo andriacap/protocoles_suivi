@@ -5,5 +5,10 @@
     "color":"#e1fffe",
     "export_csv": [
       { "label": "Format standard CSV", "type":"csv" , "method": "standard" }
+    ],
+    "permission_objects": [
+      "GNM_GRP_SITES",
+      "GNM_SITES",
+      "GNM_VISITES"
     ]
 }

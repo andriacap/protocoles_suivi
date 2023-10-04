@@ -1,14 +1,23 @@
 {
+  "cruved": {"C": 1, "U": 1, "D": 3},
   "genre":"M",
   "label": "Passage",
   "label_list": "Passages",
   "display_properties": [
     "observers",
-    "passage",
+    "observateurCompl",
+    "qObserver",
     "visit_date_min",
+    "heureDebut",
+    "heureFin",
+    "passage",
+    "periode",
     "pluviosite",
     "couvertureNuageuse",
+    "tempAir",
+    "humidite",
     "vent",
+    "pertubations",
     "comments"
   ],
   "display_list": [
@@ -31,11 +40,18 @@
       "required": true,
       "attribut_label": "Site"
     },
-    "qObservateur":{
-      "type_widget": "select",
+    "qObserver":{
+      "type_widget": "datalist",
       "required": false,
-      "attribut_label": "Qualité observateur",
-      "values": ["Propriétaire"]
+      "attribut_label": "Qualité de l'observateur",
+      "values": [
+          "Propriétaire", 
+          "Gestionnaire", 
+          "Locataire", 
+          "Simple observateur",
+          "Autre"
+        ],
+      "multiple": true
     },
     "observateurCompl":{
       "type_widget": "datalist",
@@ -102,6 +118,7 @@
       "values": ["0 - 25%", "25 - 50%", "50 - 75%", "75 - 100%"]
     },
     "vent": {
+      "attribut_label": "Vent",
       "type_widget": "select",
       "required": false,
       "values": ["0-Calme", "1-Très légère brise", "2-Légère brise", "3-Petite brise","4-Jolie brise","6-Vent frais","7-Grand frais"]

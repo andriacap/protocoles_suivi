@@ -1,4 +1,5 @@
 {
+  "cruved": {"C": 1, "U": 1, "D": 3},
   "genre":"F",
   "label": "Mare",
   "label_list": "Mares",
@@ -71,7 +72,8 @@
     "pzhCode": {
       "type_widget": "text",
       "attribut_label": "Code de la mare",
-      "required": true
+      "required": true,
+      "hidden": true
     },
     "first_use_date": {
       "attribut_label": "Date de création",
