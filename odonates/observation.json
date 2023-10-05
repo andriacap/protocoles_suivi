@@ -7,12 +7,12 @@
   "id_nomenclature_stade",
   "id_nomenclature_etat_bio",
   "id_nomenclature_sex",
-  "comportement",
+  "id_nomenclature_behaviour",
+  "count_tranche",
   "count_min",
   "count_max",
   "count_exact",
   "count_average",
-  "count_tranche",
   "comments"
 ],
 "display_list": [
@@ -58,65 +58,51 @@
     "count_average": {
       "type_widget": "number",
       "attribut_label": "moyenne nombre obs",
-      "required": false
+      "required": false,
+      "hidden": true
     },
     "id_nomenclature_etat_bio": {
-      "type_widget": "datalist",
-      "attribut_label": "Etat biologique",
-      "api": "nomenclatures/nomenclature/ETA_BIO",
-      "application": "GeoNature",
-      "keyValue": "id_nomenclature",
-      "keyLabel": "label_fr",
-      "data_path": "values",
+      "type_widget": "nomenclature",
+      "attribut_label": "Stade de vie",
+      "code_nomenclature_type": "ETA_BIO",
       "type_util": "nomenclature",
-      "multiple": false,
-      "hidden": true,
-      "filters": {
-        "cd_nomenclature": ["3"]
-      },
-      "default": {
-        "cd_nomenclature": "3"
-      }
+      "required": false
     },
     "id_nomenclature_stade": {
-      "type_widget": "datalist",
+      "type_widget": "nomenclature",
       "attribut_label": "Stade de vie",
-      "api": "nomenclatures/nomenclature/STADE_VIE",
-      "application": "GeoNature",
-      "keyValue": "id_nomenclature",
-      "keyLabel": "label_fr",
-      "data_path": "values",
+      "code_nomenclature_type": "STADE_VIE",
       "type_util": "nomenclature",
       "required": false,
-      "filters": {
-          "cd_nomenclature": ["1", "3", "4", "6", "11"]
-      },
-      "default": {
+      "value": {
+        "code_nomenclature_type": "STADE_VIE",
         "cd_nomenclature": "1"
-      }
+      },
+     "cd_nomenclatures": ["1", "3", "4", "6", "11"]
     },
     "id_nomenclature_sex": {
-      "type_widget": "datalist",
+      "type_widget": "nomenclature",
       "attribut_label": "Sexe majoritaire",
-      "api": "nomenclatures/nomenclature/SEXE",
-      "application": "GeoNature",
-      "keyValue": "id_nomenclature",
-      "keyLabel": "label_fr",
-      "data_path": "values",
+      "code_nomenclature_type": "SEXE",
       "type_util": "nomenclature",
-      "required": true,
-      "filters": {
-          "cd_nomenclature": ["0", "2", "3", "5"]
+      "required": false,
+      "value": {
+        "code_nomenclature_type": "SEXE",
+        "cd_nomenclature": "0"
       },
-      "default": {
-        "cd_nomenclature": "1"
-      }
+     "cd_nomenclatures": ["0", "2", "3", "5"]
     },
-    "comportement": {
-      "type_widget": "select",
-      "attribut_label": "Comportement majoritaire",
-	    "required": false,
-      "values": ["Inconnu", "Chasse/alimentation", "Posé","Passage en vol","Repos","Tandem","Coeur copulatoire","Pond","Territorial"]
+    "id_nomenclature_behaviour": {
+      "type_widget": "nomenclature",
+      "attribut_label": "Comportement",
+      "code_nomenclature_type": "OCC_COMPORTEMENT",
+      "type_util": "nomenclature",
+      "required": false,
+      "value": {
+        "code_nomenclature_type": "OCC_COMPORTEMENT",
+        "cd_nomenclature": "0"
+      },
+     "cd_nomenclatures": ["0","8", "15", "10", "17", "21", "20", "23", "22" ]
     },
     "comments": {
       "type_widget": "textarea",

@@ -19,7 +19,16 @@ CREATE OR REPLACE VIEW gn_monitoring.v_synthese_odonates AS WITH source AS (
     SELECT id_source
     FROM gn_synthese.t_sources
     WHERE name_source = CONCAT('MONITORING_', UPPER('odonates'))
-  )
+  ), determiner AS (
+    SELECT
+        array_agg(r.id_role) AS id_determiner,
+        CONCAT(r.nom_role, ' ', prenom_role) AS determiner,
+        id_base_visit
+    FROM gn_monitoring.t_base_visits tbv
+    JOIN utilisateurs.t_roles r
+    ON r.id_role = tbv.id_digitiser
+    GROUP BY id_base_visit, r.nom_role, prenom_role
+)
 SELECT o.uuid_observation AS unique_id_sinp,
   v.uuid_base_visit AS unique_id_sinp_grp,
   (
@@ -45,6 +54,10 @@ SELECT o.uuid_observation AS unique_id_sinp,
     'null'
   )::integer AS id_nomenclature_bio_condition,
   nullif(
+    json_extract_path(oc.data::json, 'id_nomenclature_behaviour')::text,
+    'null'
+  )::integer AS id_nomenclature_behaviour,
+  nullif(
     ((oc.data::json#>'{count_min}'::text [])::text),
     'null'
   )::integer AS count_min,
@@ -63,7 +76,7 @@ SELECT o.uuid_observation AS unique_id_sinp,
   v.visit_date_min AS date_min,
   v.visit_date_min AS date_max,
   obs.observers,
-  v.id_digitiser,
+  det.determiner AS determiner,
   v.id_module as id_module,
   v.comments AS comment_context,
   o.comments AS comment_description,
@@ -153,6 +166,7 @@ FROM gn_monitoring.t_base_visits v
   JOIN gn_monitoring.t_site_complements sc on sc.id_base_site = s.id_base_site
   JOIN gn_commons.t_modules m ON m.id_module = v.id_module
   JOIN gn_monitoring.t_observations o ON o.id_base_visit = v.id_base_visit
+  JOIN determiner det ON det.id_base_visit = v.id_base_visit
   JOIN gn_monitoring.t_observation_complements oc ON oc.id_observation = o.id_observation
   JOIN taxonomie.taxref t ON t.cd_nom = o.cd_nom
   LEFT JOIN LATERAL (
